@@ -20,7 +20,7 @@ final class SnowyWindowController: NSWindowController {
             settings: settings, resetDecorations: resetDecorations, replayWalkthrough: replayWalkthrough,
             openEditor: { [weak self] in self?.openSceneEditor(settings: settings) }
         ))
-        hosting.sizingOptions = []
+        if #available(macOS 13.0, *) { hosting.sizingOptions = [] }
         window.contentViewController = hosting
         window.center()
         window.setFrameAutosaveName("Snowy Settings")
@@ -30,7 +30,7 @@ final class SnowyWindowController: NSWindowController {
 
     func present() {
         showWindow(nil)
-        NSApp.activate()
+        NSApp.activate(ignoringOtherApps: true)
         window?.makeKeyAndOrderFront(nil)
     }
 
@@ -67,22 +67,24 @@ struct SnowyWindowView: View {
     @State private var page: Page? = .decorations
 
     var body: some View {
-        NavigationSplitView {
+        HSplitView {
             List(Page.allCases, selection: $page) { item in
                 Label(item.rawValue, systemImage: item.symbol)
                     .tag(item)
             }
             .listStyle(.sidebar)
-            .navigationSplitViewColumnWidth(min: 160, ideal: 182, max: 210)
-        } detail: {
-            switch page ?? .decorations {
-            case .wallpapers:
-                WallpapersView()
-            case .decorations:
-                DecorationsView(settings: settings, resetDecorations: resetDecorations, openEditor: openEditor)
-            case .guide:
-                SnowyGuideView(replayWalkthrough: replayWalkthrough)
+            .frame(minWidth: 160, idealWidth: 182, maxWidth: 210)
+            Group {
+                switch page ?? .decorations {
+                case .wallpapers:
+                    WallpapersView()
+                case .decorations:
+                    DecorationsView(settings: settings, resetDecorations: resetDecorations, openEditor: openEditor)
+                case .guide:
+                    SnowyGuideView(replayWalkthrough: replayWalkthrough)
+                }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 }

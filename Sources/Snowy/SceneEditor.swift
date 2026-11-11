@@ -41,7 +41,7 @@ final class SceneEditorWindowController: NSWindowController, NSWindowDelegate {
         super.init(window: window)
         window.delegate = self
         let hosting = NSHostingController(rootView: SceneEditor(settings: settings) { [weak self] in self?.close() })
-        hosting.sizingOptions = []
+        if #available(macOS 13.0, *) { hosting.sizingOptions = [] }
         window.contentViewController = hosting
         window.setFrameAutosaveName("Snowy Scene Editor")
     }
@@ -51,7 +51,7 @@ final class SceneEditorWindowController: NSWindowController, NSWindowDelegate {
     func present() {
         settings.onEditorVisibility?(true)
         showWindow(nil)
-        NSApp.activate()
+        NSApp.activate(ignoringOtherApps: true)
         window?.makeKeyAndOrderFront(nil)
     }
 
@@ -67,7 +67,7 @@ enum SceneSelection: Equatable {
 }
 
 struct SceneEditor: View {
-    @Bindable var settings: DecorationSettings
+    @ObservedObject var settings: DecorationSettings
     var dismiss: () -> Void
     @State private var libraryDrag: SceneLibraryDrag?
     @State private var displayID: UInt32?
@@ -103,12 +103,14 @@ struct SceneEditor: View {
                     .frame(minWidth: 470, maxWidth: .infinity, maxHeight: .infinity)
                 }
             } else {
-                ContentUnavailableView("No Display Available", systemImage: "display")
+                Label("No Display Available", systemImage: "display")
+                    .font(.title2)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             Divider()
             footer
         }
-        .onChange(of: desktop?.id) {
+        .onChange(of: desktop?.id) { _ in
             selection = nil
             joint = 0
         }
@@ -241,16 +243,17 @@ struct SceneEditor: View {
                     .accessibilityHidden(true)
                 Text(name)
                     .font(.caption.weight(.medium))
-                    .lineLimit(2, reservesSpace: true)
+                    .lineLimit(2)
+                    .frame(minHeight: 30)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
                     .padding(.horizontal, 4)
                     .padding(.vertical, 6)
                     .background(.background)
             }
-            .clipShape(.rect(cornerRadius: 8))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
             .overlay { RoundedRectangle(cornerRadius: 8).strokeBorder(.primary.opacity(0.18)) }
-            .contentShape(.rect(cornerRadius: 8))
+            .contentShape(RoundedRectangle(cornerRadius: 8))
         }
         .buttonStyle(.plain)
         .accessibilityLabel("Add \(name)")

@@ -82,7 +82,7 @@ struct SceneEditorCanvas: View {
             }
             .background(Color(red: 0.08, green: 0.14, blue: 0.23))
         }
-        .clipShape(.rect(cornerRadius: 9))
+        .clipShape(RoundedRectangle(cornerRadius: 9))
         .overlay { RoundedRectangle(cornerRadius: 9).strokeBorder(.primary.opacity(0.18)) }
     }
 

@@ -25,7 +25,7 @@ final class WelcomeWindowController: NSWindowController, NSWindowDelegate {
     func present() {
         window?.center()
         showWindow(nil)
-        NSApp.activate()
+        NSApp.activate(ignoringOtherApps: true)
         window?.makeKeyAndOrderFront(nil)
     }
 
@@ -156,13 +156,13 @@ private struct WelcomePreview: View {
             case .menu: menu
             }
         }
-        .clipShape(.rect(cornerRadius: 8))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
         .overlay { RoundedRectangle(cornerRadius: 8).strokeBorder(divider, lineWidth: 1) }
         .task(id: step) {
             demoFinished = reduceMotion || step == .menu
             guard !demoFinished else { return }
             do {
-                try await Task.sleep(for: .milliseconds(250))
+                try await Task.sleep(nanoseconds: 250_000_000)
                 withAnimation(.easeInOut(duration: 0.45)) { demoFinished = true }
             } catch {
                 // Leaving the page cancels its preview.
@@ -218,7 +218,7 @@ private struct WelcomePreview: View {
         }
         .frame(width: width, height: height)
         .background(surface)
-        .clipShape(.rect(cornerRadius: 6))
+        .clipShape(RoundedRectangle(cornerRadius: 6))
         .overlay { RoundedRectangle(cornerRadius: 6).strokeBorder(divider, lineWidth: 1) }
         .shadow(color: .black.opacity(0.15), radius: 5, x: 0, y: 3)
         .overlay(alignment: .top) {

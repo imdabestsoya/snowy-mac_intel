@@ -16,6 +16,8 @@ final class SnowyUpdater: NSObject, SPUUpdaterDelegate {
     }
 
     func start() {
+        // Upstream releases are not this Intel/Monterey compatibility port.
+        guard Bundle.main.object(forInfoDictionaryKey: "SnowyCompatibilityBuild") as? Bool != true else { return }
         guard Bundle.main.bundleURL.pathExtension == "app" else { return }
         do {
             try updater.start()

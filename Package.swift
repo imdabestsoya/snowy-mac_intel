@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "Snowy",
-    platforms: [.macOS(.v14)],
+    platforms: [.macOS(.v12)],
     products: [.executable(name: "Snowy", targets: ["Snowy"])],
     dependencies: [
         .package(url: "https://github.com/sparkle-project/Sparkle", exact: "2.10.1")

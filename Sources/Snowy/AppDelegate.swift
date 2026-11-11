@@ -205,7 +205,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSM
             content.onClose = { [weak popover] in popover?.performClose(nil) }
             self.windPopover = popover
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
-            NSApp.activate()
+            NSApp.activate(ignoringOtherApps: true)
             popover.contentViewController?.view.window?.makeKey()
         }
     }

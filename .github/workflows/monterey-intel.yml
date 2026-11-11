@@ -1,0 +1,45 @@
+name: Build Monterey Intel
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Sources/**"
+      - "Package.*"
+      - "App/**"
+      - "scripts/build-app.sh"
+      - ".github/workflows/monterey-intel.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-15-intel
+    timeout-minutes: 30
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_16.4.app/Contents/Developer
+      SNOWY_ARCH: x86_64
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Check toolchain
+        run: |
+          test "$(uname -m)" = x86_64
+          swift --version
+          xcrun -sdk macosx metal --version
+      - name: Run physics and geometry tests
+        run: swift test --arch x86_64
+      - name: Build Intel app targeting macOS 12
+        run: zsh scripts/build-app.sh
+      - name: Verify architecture and deployment target
+        run: |
+          test "$(lipo -archs build/Snowy.app/Contents/MacOS/Snowy)" = x86_64
+          test "$(/usr/libexec/PlistBuddy -c 'Print :LSMinimumSystemVersion' build/Snowy.app/Contents/Info.plist)" = 12.0
+          otool -l build/Snowy.app/Contents/MacOS/Snowy | grep -A 5 LC_BUILD_VERSION
+          otool -l build/Snowy.app/Contents/MacOS/Snowy | awk '/cmd LC_BUILD_VERSION$/ { found=1 } found && $1 == "minos" { if ($2 != "12.0") exit 1; ok=1; exit } END { if (!ok) exit 1 }'
+          codesign --verify --deep --strict build/Snowy.app
+      - name: Package app preserving framework symlinks
+        run: ditto -c -k --sequesterRsrc --keepParent build/Snowy.app build/Snowy-macOS12-Intel.zip
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Snowy-macOS12-Intel
+          path: build/Snowy-macOS12-Intel.zip
+          if-no-files-found: error

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct DecorationsView: View {
-    @Bindable var settings: DecorationSettings
+    @ObservedObject var settings: DecorationSettings
     var resetDecorations: () -> Void
     var openEditor: () -> Void
 
@@ -82,7 +82,8 @@ struct DecorationsView: View {
                         Text(layout.detail)
                             .font(.caption)
                             .foregroundStyle(.secondary)
-                            .lineLimit(2, reservesSpace: true)
+                            .lineLimit(2)
+                    .frame(minHeight: 30)
                     }
                     Spacer(minLength: 0)
                     Image(systemName: selected ? "checkmark.circle.fill" : "circle")
@@ -94,13 +95,13 @@ struct DecorationsView: View {
                 .padding(.vertical, 8)
                 .background(.background)
             }
-            .clipShape(.rect(cornerRadius: 8))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
             .overlay {
                 RoundedRectangle(cornerRadius: 8)
                     .strokeBorder(selected ? Color.accentColor : Color.secondary.opacity(0.22),
                                   lineWidth: selected ? 2 : 1)
             }
-            .contentShape(.rect(cornerRadius: 8))
+            .contentShape(RoundedRectangle(cornerRadius: 8))
         }
         .buttonStyle(.plain)
         .accessibilityAddTraits(selected ? .isSelected : [])

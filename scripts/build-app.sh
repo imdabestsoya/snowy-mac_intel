@@ -29,8 +29,13 @@ if [[ -e "$app_dir" || -L "$app_dir" ]]; then
     exit 1
   fi
 fi
-swift build -c release --product Snowy
-binary_dir="$(swift build -c release --show-bin-path)"
+build_arch="${SNOWY_ARCH:-$(uname -m)}"
+if [[ "$build_arch" != x86_64 && "$build_arch" != arm64 ]]; then
+  print -u2 "SNOWY_ARCH must be x86_64 or arm64."
+  exit 2
+fi
+swift build -c release --arch "$build_arch" --product Snowy
+binary_dir="$(swift build -c release --arch "$build_arch" --show-bin-path)"
 sparkle_artifact="$project_root/.build/artifacts/sparkle/Sparkle"
 sparkle_framework="$sparkle_artifact/Sparkle.xcframework/macos-arm64_x86_64/Sparkle.framework"
 if [[ ! -L "$sparkle_framework/Versions/Current" || ! -x "$sparkle_framework/Sparkle" || ! -f "$sparkle_artifact/LICENSE" ]]; then
@@ -56,7 +61,7 @@ while IFS= read -r runtime_path; do
     *) install_name_tool -delete_rpath "$runtime_path" "$staged_binary" ;;
   esac
 done <<< "$runtime_paths"
-xcrun -sdk macosx metal -mmacosx-version-min=14.0 -c \
+xcrun -sdk macosx metal -mmacosx-version-min=12.0 -std=macos-metal2.4 -c \
   "$project_root/Sources/Snowy/Shaders/Snow.metal" -o "$project_root/.build/shaders/Snow.air"
 xcrun -sdk macosx metallib "$project_root/.build/shaders/Snow.air" \
   -o "$staged_app/Contents/Resources/Snow.metallib"

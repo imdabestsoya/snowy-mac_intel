@@ -218,7 +218,7 @@ private struct WallpaperTile: View {
                                 .foregroundStyle(.tertiary)
                         }
                     }
-                    .clipShape(.rect(cornerRadius: 8))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
                     .overlay {
                         RoundedRectangle(cornerRadius: 8)
                             .strokeBorder(isSelected ? Color.accentColor : Color.primary.opacity(0.12),

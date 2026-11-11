@@ -1,40 +1,39 @@
 import Foundation
-import Observation
+import Combine
 
 @MainActor
-@Observable
-final class DecorationSettings {
+final class DecorationSettings: ObservableObject {
     static let scaleRange = 0.65...1.60
 
-    private(set) var layout: DecorationLayout
-    var scale: Double {
+    @Published private(set) var layout: DecorationLayout
+    @Published var scale: Double {
         didSet {
             guard scale != oldValue else { return }
             defaults.set(scale, forKey: "decorations.scale")
             apply()
         }
     }
-    var pushes: Bool {
+    @Published var pushes: Bool {
         didSet {
             guard pushes != oldValue else { return }
             defaults.set(pushes, forKey: "decorations.pushes")
             apply()
         }
     }
-    private(set) var usesCustomScenes: Bool
-    private(set) var scenes: [UInt32: DecorationScene]
-    var includesDesktopIcons: Bool {
+    @Published private(set) var usesCustomScenes: Bool
+    @Published private(set) var scenes: [UInt32: DecorationScene]
+    @Published var includesDesktopIcons: Bool {
         didSet {
             guard includesDesktopIcons != oldValue else { return }
             defaults.set(includesDesktopIcons, forKey: "decorations.includesDesktopIcons")
             apply()
         }
     }
-    var desktops: [SceneDesktop] = []
+    @Published var desktops: [SceneDesktop] = []
 
-    @ObservationIgnored private let defaults: UserDefaults
-    @ObservationIgnored var onChange: ((DecorationConfiguration) -> Void)?
-    @ObservationIgnored var onEditorVisibility: ((Bool) -> Void)?
+    private let defaults: UserDefaults
+    var onChange: ((DecorationConfiguration) -> Void)?
+    var onEditorVisibility: ((Bool) -> Void)?
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults

@@ -1,3 +1,5 @@
+> **Intel/macOS 12 candidate port:** See [MONTEREY-INTEL.md](MONTEREY-INTEL.md) for build instructions and testing limitations. The original upstream README follows.
+
 # Snowy ❄️
 
 Snow for your desktop. A native Mac app that lets winter settle on your windows, widgets, and bottom Dock.
