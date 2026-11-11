@@ -18,7 +18,9 @@ enum WallpaperEntry: Hashable, Identifiable, Sendable {
 }
 
 actor WallpaperLibrary {
-    static let shared = WallpaperLibrary(supportDirectory: .applicationSupportDirectory)
+    static let shared = WallpaperLibrary(
+        supportDirectory: FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+    )
     static let importTypes: [UTType] = [.jpeg, .png, .heic, .tiff, .webP]
     static let importLimit = 60
     private static let maximumFileBytes = 64 * 1024 * 1024
