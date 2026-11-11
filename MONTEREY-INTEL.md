@@ -1,13 +1,15 @@
-# Snowy for Intel Macs running macOS 12 — candidate source port
+# Snowy for Intel Macs running macOS 12 — Intel compatibility build
 
-This is modified source, not a compiled app. Compilation and macOS 12 runtime testing are still required. The authoring environment had Linux, no Swift compiler, no Apple SDK, and no macOS build runner. Shell syntax, plist values, and patch whitespace were checked; native tests have NOT run.
+The Intel app was successfully compiled and packaged by GitHub Actions using Xcode 16.4. All 192 physics and geometry tests passed. The build verified x86_64 architecture, a macOS 12.0 deployment target, and the app signature. Actual launch and rendering on macOS 12 still need testing.
+
+Download the **Snowy-macOS12-Intel** artifact from [the successful build](https://github.com/imdabestsoya/snowy-mac_intel/actions/runs/42981418116), unzip it and the nested app ZIP, then move Snowy.app to Applications. GitHub artifact downloads require sign-in and expire after their retention period.
 
 Based on https://github.com/soloiaros/snowy-mac at commit 5769b0001c62be93f238536dd1ca0dcda68eba87. Original MIT license retained.
 
 ## Build using GitHub (no Xcode needed on your Monterey Mac)
 
-1. Fork the original repository into your GitHub account.
-2. Copy this archive's source changes into your fork, including the hidden `.github/workflows/monterey-intel.yml` file. Commit and push them to the default branch. The included `monterey-intel.patch` also applies to the base commit above using `git apply`.
+1. Use this repository, which already contains the compatibility changes.
+2. Open the repository on GitHub while signed into an account with write access.
 3. In the fork, open **Actions → Build Monterey Intel → Run workflow**. Enable Actions for the fork if GitHub asks.
 4. When the run succeeds, open it and download the **Snowy-macOS12-Intel** artifact.
 5. Extract the artifact ZIP, then the nested app ZIP. Move **Snowy.app** to Applications.

@@ -1,4 +1,4 @@
-> **Intel/macOS 12 candidate port:** See [MONTEREY-INTEL.md](MONTEREY-INTEL.md) for build instructions and testing limitations. The original upstream README follows.
+> **Intel/macOS 12 build:** [Download from the successful build](https://github.com/imdabestsoya/snowy-mac_intel/actions/runs/42981418116) under Artifacts. All 192 tests and architecture/signing checks passed; runtime testing on Monterey is still needed. See [MONTEREY-INTEL.md](MONTEREY-INTEL.md). The original upstream README follows.
 
 # Snowy ❄️
 
